@@ -1,0 +1,37 @@
+
+services:
+  db:
+    image: postgres:latest
+    container_name: postgres_db
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: akiptenko 
+      POSTGRES_PASSWORD: Germanoid123468
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - dbnet
+
+
+  app:
+    build:
+      context: . 
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://akiptenko:Germanoid123468@db/mydatabase
+    command: python data_loader.py
+    networks:
+      - dbnet
+
+
+volumes:
+  db-data:
+
+
+networks:
+  dbnet:
+    driver: bridge
